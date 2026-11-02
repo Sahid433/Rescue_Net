@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{% block title %}RescueNet{% endblock %} · RescueNet</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static',filename='css/style.css') }}">
+{% block head %}{% endblock %}
+</head><body>
+{% if session.get('user_id') %}
+<aside class="sidebar">
+ <a class="brand" href="{{ url_for('dashboard') }}"><span class="brand-mark">R</span><span>Rescue<span class="brand-light">Net</span><small>RESPONSE INTELLIGENCE</small></span></a>
+ <div class="side-label">WORKSPACE</div>
+ <nav>
+  <a class="{{ 'active' if request.endpoint=='dashboard' else '' }}" href="{{ url_for('dashboard') }}">▦ <span>Overview</span></a>
+  <a class="{{ 'active' if request.endpoint in ['incidents','incident_detail'] else '' }}" href="{{ url_for('incidents') }}">⌁ <span>Incidents</span><b class="nav-dot"></b></a>
+  <a class="{{ 'active' if request.endpoint=='report' else '' }}" href="{{ url_for('report') }}">＋ <span>Report emergency</span></a>
+  <a class="{{ 'active' if request.endpoint=='map_view' else '' }}" href="{{ url_for('map_view') }}>◎ <span>Live incident map</span></a>
+  <div class="side-label">OPERATIONS</div>
+  <a class="{{ 'active' if request.endpoint=='teams' else '' }}" href="{{ url_for('teams') }}">♧ <span>Rescue teams</span></a>
+  <a class="{{ 'active' if request.endpoint=='resources' else '' }}" href="{{ url_for('resources') }}">▤ <span>Relief resources</span></a>
+  <a class="{{ 'active' if request.endpoint=='shelters' else '' }}" href="{{ url_for('shelters') }}">⌂ <span>Shelters</span></a>
+  <div class="side-label">INSIGHTS</div>
+  <a class="{{ 'active' if request.endpoint=='analytics' else '' }}" href="{{ url_for('analytics') }}">▥ <span>Analytics</span></a>
+ </nav>
+ <div class="sidebar-bottom"><div class="secure"><span>●</span> System operational</div><div class="profile-mini"><div class="avatar">{{ session.get('name','U')[0] }}</div><div><strong>{{ session.get('name') }}</strong><small>{{ session.get('role','user')|title }}</small></div><a href="{{ url_for('logout') }}" title="Sign out">↗</a></div></div>
+</aside>
+{% endif %}
+<main class="{{ 'main-with-sidebar' if session.get('user_id') else '' }}">
+ {% if session.get('user_id') %}<header class="topbar"><div><span class="breadcrumb">RescueNet</span><span class="muted"> / {% block crumb %}Workspace{% endblock %}</span></div><div class="top-actions"><span class="live-pill"><i></i> DEMO ENVIRONMENT</span><span class="top-avatar">{{ session.get('name','U')[0] }}</span></div></header>{% endif %}
+ <section class="page-wrap">
+ {% with messages=get_flashed_messages(with_categories=true) %}{% if messages %}{% for cat,msg in messages %}<div class="flash {{ cat }}">{{ msg }} <button onclick="this.parentElement.remove()">×</button></div>{% endfor %}{% endif %}{% endwith %}
+ {% block content %}{% endblock %}
+ </section>
+</main>
+<script src="{{ url_for('static',filename='js/app.js') }}"></script>
+{% block scripts %}{% endblock %}
+</body></html>

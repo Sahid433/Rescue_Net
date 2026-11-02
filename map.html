@@ -1,0 +1,9 @@
+{% extends "base.html" %}{% block title %}Incident map{% endblock %}{% block crumb %}Incident map{% endblock %}
+{% block head %}<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">{% endblock %}
+{% block content %}<div class="page-heading"><div><div class="eyebrow">GEOSPATIAL OPERATIONS</div><h1>Incident map</h1><p>Geographic overview of recorded incident coordinates.</p></div><span class="count-chip">{{ incidents|length }} mapped records</span></div><div class="panel map-panel"><div class="panel-head"><div><h3>Response zone overview</h3><p>Markers are based on coordinates saved with each incident.</p></div><div class="map-key"><span>● Critical</span><span>● High</span><span>● Moderate</span></div></div><div id="incidentMap"></div><div class="map-note">Demo map: sample records use illustrative Delhi coordinates. Confirm coordinates before relying on geographic placement.</div></div>{% endblock %}
+{% block scripts %}<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script><script>
+const incidents={{ incidents|tojson }};
+const map=L.map('incidentMap').setView([28.62,77.215],12);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'&copy; OpenStreetMap contributors'}).addTo(map);
+incidents.forEach(i=>{const color=i.priority==='Critical'?'#e45d63':i.priority==='High'?'#e5a13b':'#4c8ce5';const marker=L.circleMarker([i.lat,i.lng],{radius:9,color,fillColor:color,fillOpacity:.85,weight:2}).addTo(map);marker.bindPopup(`<b>${i.title}</b><br>${i.category} · ${i.priority}<br>${i.location}<br><a href="/incident/${i.id}">Open incident</a>`);});
+</script>{% endblock %}
